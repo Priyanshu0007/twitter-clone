@@ -3,7 +3,7 @@ import { BsSearch } from "react-icons/bs";
 
 const RightSidebar = () => {
   return (
-    <section className="sticky top-4 overflow-scroll scrollbar-hide flex w-[275px] flex-col items-stretch h-screen ml-7 mt-5 right-0">
+    <section className="sticky top-4 hidden xl:flex overflow-scroll scrollbar-hide w-[275px] flex-col items-stretch h-screen ml-7 mt-5 right-0">
           <div>
             <div className="relative w-full h-full text-white group">
               <input id="searchBox" type="text" placeholder="Search Twitter" className="outline-none bg-neutral-900/90 w-full h-full rounded-2xl py-4 pl-14 focus:border-primary focus:border "/>

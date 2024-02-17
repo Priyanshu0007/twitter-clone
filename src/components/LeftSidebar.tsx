@@ -28,7 +28,7 @@ const NAVIGATION_ITEMS=[
   ]
 const LeftSidebar = () => {
   return (
-    <section className="fixed w-[275px] flex flex-col h-screen text-white items-stretch">
+    <section className="fixed w-[275px] hidden xl:flex flex-col h-screen text-white items-stretch">
     <div className=" flex flex-col items-stretch h-full text-white space-y-4 mt-4">
     <Link href={"/"} className="my-4 py-2 px-6 text-2xl">
       <BsTwitter/>

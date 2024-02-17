@@ -41,7 +41,6 @@ export default function SupabaseProvider({
     });
 
     supabase.auth.getSession().then((res) => {
-      console.log(res);
       
       if (!res.data.session) {
         setIsOpen(true);
