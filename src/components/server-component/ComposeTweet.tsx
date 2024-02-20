@@ -6,6 +6,7 @@ import { cookies,headers } from 'next/headers'
 import React from 'react'
 import ComposeTweetForm from '../client-component/compose-tweet-form'
 import { SupabaseClient } from "@supabase/supabase-js";
+import { revalidatePath } from 'next/cache'
 const ComposeTweet = () => {
     async function submitTweet(formData:FormData){
         'use server'
@@ -27,6 +28,7 @@ const ComposeTweet = () => {
           text:tweet.toString(),
           id:randomUUID()
         })        
+        revalidatePath("/")
         return { data: data, error: error };
     }
   return (<ComposeTweetForm serverAction={submitTweet} />)
