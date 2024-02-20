@@ -1,24 +1,35 @@
+import { Database } from '@/lib/supabase.types'
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
+import { error } from 'console'
+import { randomUUID } from 'crypto'
+import { cookies,headers } from 'next/headers'
 import React from 'react'
-
+import ComposeTweetForm from '../client-component/compose-tweet-form'
+import { SupabaseClient } from "@supabase/supabase-js";
 const ComposeTweet = () => {
     async function submitTweet(formData:FormData){
         'use server'
-        console.log("formData",formData);
+        const tweet=formData.get("tweet")
+        if(!tweet){return}
+        const supabaseClient=createServerComponentClient<Database>({cookies})
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const supabaseSecretKey = process.env.SUPABASE_SECRET_KEY;
+        if (!supabaseUrl || !supabaseSecretKey)
+          return { error: { message: "supabase credentials are not provided!" } };
+
+        const supabaseServer = new SupabaseClient(supabaseUrl, supabaseSecretKey);
+
+        const { data: userData, error: userError } =await supabaseClient.auth.getUser();
         
+        if(userError){return}
+        const {data,error}= await supabaseServer.from("tweets").insert({
+          profile_id:userData.user.id,
+          text:tweet.toString(),
+          id:randomUUID()
+        })        
+        return { data: data, error: error };
     }
-  return (
-
-      <form action={submitTweet as any} className="flex flex-col w-full h-full">
-              <input type="text" name="tweet" className="w-full h-full bg-transparent outline-none border-none border-b-[0.5px] p-1 border-gray-600 text-2xl text-gray-600 placeholder:text-2xl placeholder:text-gray-600" placeholder="What's happening?"/>
-              <div className="w-full justify-between items-center flex">
-                <div></div>
-                <div className="w-full max-w-[100px]">
-                  <button type='submit' className="w-full text-white rounded-full font-bold m-2 bg-primary px-1 py-1 text-lg text-center hover:bg-opacity-70 transition duration-200">Tweet</button>
-                </div>
-              </div>
-            </form>
-
-  )
+  return (<ComposeTweetForm serverAction={submitTweet} />)
 }
 
 export default ComposeTweet
