@@ -4,15 +4,16 @@ import ComposeTweet from './server-component/ComposeTweet';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { supabaseServer } from '@/lib/supabase';
 import { Database } from '@/lib/supabase.types';
-
-import { getTweets } from '@/lib/supabase/getTweets';
-import Tweet from './client-component/tweet';
-
-
+import { cookies } from 'next/headers';
+import { getTweets } from '@/lib/supabase/queries';
+import Tweet from './client-component/Tweet';
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 
 
 const MainComponent = async() => {
   const res=await getTweets();
+  const supabaseClient=createServerComponentClient({cookies})
+  const { data: userData, error: userError } =await supabaseClient.auth.getUser();
   return (
     <main className="xl:ml-[300px] mr-6 xl:mr-1 flex w-full xl:max-w-[600px] h-full min-h-screen flex-col border-l-[0.5px] border-r-[0.5px] border-gray-600">
           <h1 className="text-xl font-bold text-white p-6 backdrop-blur bg-black/10 sticky top-0 w-full">Home</h1>
@@ -23,7 +24,7 @@ const MainComponent = async() => {
           <div className="flex flex-col">
             {res?.error && <div>Something wrong with the server</div>}
             {res?.data && res.data.map((tweet)=>(
-              <Tweet key={tweet.id} tweet={tweet}/>
+              <Tweet key={tweet.id} tweet={tweet} currentUserId={userData.user?.id}/>
             ))}
           </div>
         </main>
